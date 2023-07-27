@@ -5,6 +5,8 @@ import "./../styles/SuccessStoryPage.css";
 import { Container, ListGroup, Row, Col, Dropdown } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
+
+//this page displays the list of successs stories cards
 function SuccessStoryPage(props) {
   const [jobSector, setJobSector] = useState("All Sectors");
   const [jobSectors, setJobSectors] = useState([]);

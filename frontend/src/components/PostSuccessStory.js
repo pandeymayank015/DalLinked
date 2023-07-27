@@ -23,6 +23,8 @@ function getPostingDate() {
   return `${formattedDay}/${formattedMonth}/${year}`;
 }
 
+//created by Piyush Akoliya
+//this code displays the comment to post the success story
 function PostSuccessStory(props) {
   const [jobSector, setJobSector] = useState("None");
   const [storyComments, setStoryComments] = useState("");

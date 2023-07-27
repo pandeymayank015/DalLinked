@@ -6,7 +6,8 @@ import "./../styles/MainStoryPage.css";
 import { useAuthContext } from "../hooks/useAuthContext";
 import placeholderImage from "../images/user-placeholder.jpg";
 import Footer from "./../components/Footer";
-
+//created by Piyush Akoliya
+//this code displays the success stories list and the post stories component
 function MainStoryPage() {
   const [stories, setStories] = useState([]);
   const backendUrl = process.env.REACT_APP_BACKEND_URL;

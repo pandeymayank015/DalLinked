@@ -6,6 +6,8 @@ import "swiper/css/pagination";
 
 import { Pagination } from "swiper";
 
+//created by Piyush Akoliya
+//this code displays the success stories in the landing page
 function SuccessStoryComponent() {
   const [stories, useStories] = useState([
     {

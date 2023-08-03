@@ -6,6 +6,8 @@ const Student = require('../api/models/studentReg')
 const Employer = require('../api/models/employerReg')
 const Admin = require('../api/models/adminReg')
 
+// MIDDLEWARE USED FOR ROUTES ONLY ACCESSIBLE BY THE THREE TYPES OF USERS
+
 const requireAuth = async (req, res, next) => {
     // Verify that the user is authenticated
 

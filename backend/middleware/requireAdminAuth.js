@@ -2,10 +2,11 @@
 
 const jwt = require('jsonwebtoken')
 
-const Student = require('../api/models/studentReg')
+const Admin = require('../api/models/adminReg')
 
-// MIDDLEWARE USED FOR ROUTES ONLY ACCESSIBLE BY STUDENTS
-const requireStudentAuth = async (req, res, next) => {
+
+// MIDDLEWARE USED FOR ROUTES ONLY ACCESSIBLE BY ADMINISTRATORS
+const requireAdminAuth = async (req, res, next) => {
     // Verify that the user is authenticated
 
     // Verify authentication
@@ -20,8 +21,8 @@ const requireStudentAuth = async (req, res, next) => {
         // verify the token and the signature
         const {_id, email, userType} =  jwt.verify(token, process.env.SECRET)
 
-        // Find the student trying to login
-        req.user = await Student.findOne({ _id }).select('_id email')
+        // Find the admin trying to login
+        req.user = await Admin.findOne({ _id }).select('_id email')
         next()
 
     }catch (error){
@@ -30,4 +31,4 @@ const requireStudentAuth = async (req, res, next) => {
     }
 }
 
-module.exports = requireStudentAuth
+module.exports = requireAdminAuth

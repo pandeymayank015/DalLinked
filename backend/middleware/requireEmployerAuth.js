@@ -2,10 +2,10 @@
 
 const jwt = require('jsonwebtoken')
 
-const Student = require('../api/models/studentReg')
+const Employer = require('../api/models/employerReg')
 
-// MIDDLEWARE USED FOR ROUTES ONLY ACCESSIBLE BY STUDENTS
-const requireStudentAuth = async (req, res, next) => {
+// MIDDLEWARE USED FOR ROUTES ONLY ACCESSIBLE BY EMPLOYERS
+const requireEmployerAuth = async (req, res, next) => {
     // Verify that the user is authenticated
 
     // Verify authentication
@@ -20,8 +20,8 @@ const requireStudentAuth = async (req, res, next) => {
         // verify the token and the signature
         const {_id, email, userType} =  jwt.verify(token, process.env.SECRET)
 
-        // Find the student trying to login
-        req.user = await Student.findOne({ _id }).select('_id email')
+        // Find the employer trying to login
+        req.user = await Employer.findOne({ _id }).select('_id email')
         next()
 
     }catch (error){
@@ -30,4 +30,4 @@ const requireStudentAuth = async (req, res, next) => {
     }
 }
 
-module.exports = requireStudentAuth
+module.exports = requireEmployerAuth

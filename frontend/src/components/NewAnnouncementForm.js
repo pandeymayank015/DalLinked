@@ -1,16 +1,21 @@
+/* MADE BY SHUBHAM MISHRA */
+
 import React, { useState } from 'react';
 import { Button, Form, Alert } from 'react-bootstrap';
 import '../styles/Announcements.css';
 
 function NewAnnouncementForm({ onSubmit }) {
+  // State variables to manage form inputs and messages
   const [newAnnouncementTitle, setNewAnnouncementTitle] = useState('');
   const [newAnnouncementBody, setNewAnnouncementBody] = useState('');
   const [error, setError] = useState('');
   const [confirmPost, setConfirmPost] = useState(false);
 
+  // Function to handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Validation for title length and empty fields
     if (newAnnouncementTitle.length > 50) {
       setError('Title should not exceed 50 characters');
       return;
@@ -26,11 +31,16 @@ function NewAnnouncementForm({ onSubmit }) {
       return;
     }
 
+    // If validation passes, show post confirmation button
     setConfirmPost(true);
   };
 
+  // Function to handle post confirmation
   const handlePostConfirmation = () => {
+    // Call the provided onSubmit function to post the announcement
     onSubmit(newAnnouncementTitle, newAnnouncementBody);
+
+    // Clear form inputs and error message
     setNewAnnouncementTitle('');
     setNewAnnouncementBody('');
     setError('');
@@ -75,4 +85,5 @@ function NewAnnouncementForm({ onSubmit }) {
   );
 }
 
+// Export the NewAnnouncementForm component
 export default NewAnnouncementForm;

@@ -1,3 +1,5 @@
+/* MADE BY MAYANK PANDEY */
+
 .job-card {
     max-width: 500px;
     margin: 0 auto;
@@ -144,6 +146,7 @@
 .navigation-link:hover {
     background-color: #ddd;
 }
+
 .job-display {
     max-width: 250px;
     max-height: 400px;

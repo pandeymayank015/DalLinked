@@ -1,16 +1,24 @@
-import React, { useState } from 'react';
+/* MADE BY MAYANK PANDEY */
+
+/* This React component represents a multi-step form for creating a new job post. It collects various job details
+   such as company name, job sector, location, start date, skills required, job description, and more. The form
+   includes validation and submission, along with dynamic rendering of each step's content. */
+
+import React, { useState, useEffect, useContext } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/CreateJobPost.css';
+import { AuthContext } from "../context/AuthContext";
+import axios from 'axios';
 
 const CreateJobPost = () => {
     const [step, setStep] = useState(1);
     const [companyName, setCompanyName] = useState('');
-    const [openPos, setOpenPos] = useState('');
     const [jobSector, setJobSector] = useState('');
+    const [openPos, setOpenPos] = useState('');
     const [jobTitle, setJobTitle] = useState('');
     const [jobLoc, setJobLoc] = useState('');
     const [jobType, setJobType] = useState('');
@@ -26,6 +34,42 @@ const CreateJobPost = () => {
     const [deadline, setDeadline] = useState('');
     const [validationError, setValidationError] = useState('');
     const [jobPostData, setJobPostData] = useState(null);
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
+    const [imageUrl, setImageUrl] = useState('');
+    const [employer, setEmployer] = useState(null);
+    const [jobs, setJobs] = useState([]);
+    const [selectedJob, setSelectedJob] = useState(null);
+    const { user } = useContext(AuthContext);
+
+    useEffect(() => {
+        const getEmployerDetails = async () => {
+            try {
+                const response = await axios.get(`${backendUrl}/employerReg/email/${user.email}`);
+                setEmployer(response.data.employer);
+                const jobsResponse = await axios.get(`${backendUrl}/jobs/getByEmployerId/${response.data.employer._id}`);
+                setJobs(jobsResponse.data.job);
+                setSelectedJob(jobsResponse.data.job[0]);
+            } catch (error) {
+                console.error('Error getting employer details', error);
+            }
+        };
+        getEmployerDetails();
+    }, [user]);
+    console.log("user:", user);
+    console.log("emp:", employer)
+    const [jobSectors, setJobSectors] = useState([]);
+
+    useEffect(() => {
+        const fetchJobSectors = async () => {
+            try {
+                const response = await axios.get(`${backendUrl}/jobsectors`);
+                setJobSectors(response.data);
+            } catch (error) {
+                console.error('Failed to retrieve job sectors:', error);
+            }
+        };
+        fetchJobSectors();
+    }, [user]);
 
     const handleNext = (e) => {
         e.preventDefault();
@@ -60,8 +104,6 @@ const CreateJobPost = () => {
             setValidationError('Please fill in all fields');
             return;
         }
-
-        // Reset validation error
         setValidationError('');
 
         const formData = {
@@ -84,26 +126,27 @@ const CreateJobPost = () => {
             benefits: benefits,
             postedDate: new Date(),
             endDate: deadline,
-            employeeId: "01" //it will be fetched from the logged in employee
+            employeeId: employer._id,
+            imageUrl: employer.companyLogo,
         };
 
-        fetch('http://localhost:3003/jobs/create', {
+        fetch(`${backendUrl}/jobs/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(formData),
         })
-        .then((response) => response.json())
-        .then((data) => {
-            toast.success('Form submitted successfully!');
-            setJobPostData(data.job);
-            resetFormFields();
-        })
-        .catch((error) => {
-            toast.error('Error submitting form');
-            console.error('Error:', error);
-        });
+            .then((response) => response.json())
+            .then((data) => {
+                toast.success('Form submitted successfully!');
+                setJobPostData(data.job);
+                resetFormFields();
+            })
+            .catch((error) => {
+                toast.error('Error submitting form');
+                console.error('Error:', error);
+            });
     };
 
     const resetFormFields = () => {
@@ -123,7 +166,7 @@ const CreateJobPost = () => {
         setJobDesc('');
         setHrEmail('');
         setDeadline('');
-
+        setImageUrl('');
         setStep(1);
     };
 
@@ -160,24 +203,20 @@ const CreateJobPost = () => {
                                     required
                                 />
                             </div>
-                            <div className="mb-4">
-                                <label htmlFor="jobSector" className="block font-medium mb-1">
-                                    Job Sector: <span className="red-star">*</span>
-                                </label>
-                                <select
-                                    id="jobSector"
-                                    className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
-                                    value={jobSector}
-                                    onChange={(e) => setJobSector(e.target.value)}
-                                    required
-                                >
-                                    <option value="">Select the job sector</option>
-                                    <option value="1">IT Service</option>
-                                    <option value="2">IT Product</option>
-                                    <option value="3">Data Science</option>
-                                    <option value="4">Analytics</option>
-                                </select>
-                            </div>
+                            <select
+                                id="jobSector"
+                                className="w-full border border-gray-300 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
+                                value={jobSector}
+                                onChange={(e) => setJobSector(e.target.value)}
+                                required
+                            >
+                                <option value="">Select the job sector</option>
+                                {jobSectors.map((sector) => (
+                                    <option key={sector._id} value={sector.name}>
+                                        {sector.name}
+                                    </option>
+                                ))}
+                            </select>
                             <div className="mb-4">
                                 <label htmlFor="jobTitle" className="block font-medium mb-1">
                                     Job Title: <span className="red-star">*</span>
@@ -224,9 +263,9 @@ const CreateJobPost = () => {
                                     required
                                 >
                                     <option value="">Select the job type</option>
-                                    <option value="1">Full-Time</option>
-                                    <option value="2">Part-Time</option>
-                                    <option value="3">COOP</option>
+                                    <option value="Full-Time">Full-Time</option>
+                                    <option value="Part-Time">Part-Time</option>
+                                    <option value="COOP">COOP</option>
                                 </select>
                             </div>
                             <div className="mb-4">
@@ -311,6 +350,7 @@ const CreateJobPost = () => {
                                     value={skill3}
                                     onChange={(e) => setSkill3(e.target.value)}
                                     required
+
                                 />
                             </div>
                         </div>
@@ -378,7 +418,6 @@ const CreateJobPost = () => {
                 return null;
         }
     };
-
     return (
         <div className="bg-gray-100 text-gray-900 h-screen tracking-wider leading-normal">
             <ToastContainer />
@@ -410,5 +449,4 @@ const CreateJobPost = () => {
         </div>
     );
 };
-
 export default CreateJobPost;

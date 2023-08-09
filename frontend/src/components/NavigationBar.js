@@ -1,3 +1,5 @@
+/* MADE BY GROUP */
+
 import Container from "react-bootstrap/Container";
 
 import Nav from "react-bootstrap/Nav";
@@ -37,7 +39,6 @@ function NavigationBar() {
 
   const studentNavLinks = [
     { text: "Announcements", href: "/announcements" },
-    { text: "Jobs", href: "/joblistings" },
     { text: "Success Stories", href: "/mainStoryPage" },
     { text: "Contact Us", href: "/contactUs" },
     { text: "FAQ", href: "/faq" },
@@ -45,6 +46,8 @@ function NavigationBar() {
   ];
 
   const employerNavLinks = [
+    { text: "Contact Us", href: "/contactUs" },
+    { text: "FAQ", href: "/faq" },
     { text: "Create Job Post", href: "/CreateJobPost" },
     { text: "Employer", href: "/EmployerPage" },
   ];
@@ -57,7 +60,7 @@ function NavigationBar() {
   } else if (userType === "student") {
     navLinks = studentNavLinks;
   } else if (userType === "employer") {
-    navLinks = [...studentNavLinks, ...employerNavLinks];
+    navLinks = employerNavLinks;
   }
 
   return (
@@ -112,6 +115,9 @@ function NavigationBar() {
                           backgroundColor: "inherit",
                           border: "none",
                           padding: "0",
+                          marginBottom: "8px",
+                          marginLeft: "5px",
+                          fontWeight: "normal"
                         }}
                       >
                         Jobs
@@ -147,7 +153,7 @@ function NavigationBar() {
                 )}
                 {user && (
                   <Nav.Link
-                    onClick={handleClick}
+                    href="/" onClick={handleClick}
                     className="navigationBar"
                     style={{ color: "white" }}
                   >

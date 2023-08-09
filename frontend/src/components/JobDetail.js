@@ -1,3 +1,4 @@
+/* MADE BY MAYANKKKUMAR PATEL */
 import React, { useEffect, useState } from "react";
 import "../styles/JobDetail.css";
 import "../styles/JobCard.css";
@@ -15,11 +16,11 @@ function JobDetail(props) {
     const { user } = useAuthContext();
     const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
     // const location = useLocation();
-    const { job, isApplied, isSaved, addToAppliedJobs, addToSavedJobs, isEmployerPage } = props;
-    console.log(isEmployerPage);
+    const { job, isApplied, isSaved, addToAppliedJobs, addToSavedJobs, isEmployerPage, isListingsPage } = props;
     const styleProp = isMobile ? props.styleProp : {};
-    const closeJobDetail = isMobile && props.closeJobDetail;
+    const closeJobDetail = (isMobile || isEmployerPage) && props.closeJobDetail;
     const [isLoading, setIsLoading] = useState(false);
+    const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
     const handleApply = () => {
         const currentDate = new Date();
@@ -47,7 +48,7 @@ function JobDetail(props) {
         setIsLoading(true);
         if (user) {
             axios
-                .post("http://localhost:3003/appliedJobs/save", job, {
+                .post(`${backendUrl}/appliedJobs/save`, job, {
                     headers: {
                         Authorization: "Bearer " + user.token
                     }
@@ -69,7 +70,7 @@ function JobDetail(props) {
         setIsLoading(true);
         if (user) {
             axios
-                .post("http://localhost:3003/saveJobs/save", job, {
+                .post(`${backendUrl}/saveJobs/save`, job, {
                     headers: {
                         Authorization: "Bearer " + user.token
                     }
@@ -116,7 +117,7 @@ function JobDetail(props) {
                         </div>
                     }
                     {
-                        !isEmployerPage &&
+                        (isListingsPage) &&
                         (
                             isLoading ?
                                 (
@@ -146,7 +147,7 @@ function JobDetail(props) {
                         )
                     }
                     {
-                        !isEmployerPage &&
+                        (isListingsPage) &&
                         (
                             isLoading ?
                                 (
@@ -176,10 +177,8 @@ function JobDetail(props) {
                     }
                     {
                         (isEmployerPage && !isMobile) &&
-                        <div onClick={handleSave} className="col-2 col-xl-2 col-lg-4 col-md-4 col-sm-4 m-3">
-                            <div className="save-badge" onClick={handleCloseJobDetail}>
-                                <FontAwesomeIcon icon={faTimes} style={{ margin: "auto", fontSize: "20px" }} />
-                            </div>
+                        <div className="save-badge" onClick={handleCloseJobDetail}>
+                            <FontAwesomeIcon icon={faTimes} style={{ margin: "auto", fontSize: "20px" }} />
                         </div>
                     }
                 </div>
